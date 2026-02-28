@@ -94,7 +94,7 @@ function CriterionOverride({ criterion, aiScore, evidence, override, onOverride,
   );
 }
 
-export default function InstructorPanel({ evaluation, onOverride, overrides = {} }) {
+export default function InstructorPanel({ evaluation, onOverride, overrides = {}, onDownload }) {
   if (!evaluation) return null;
 
   const { scores = [], evidence = [], misconceptions = [] } = evaluation;
@@ -118,9 +118,12 @@ export default function InstructorPanel({ evaluation, onOverride, overrides = {}
             Audit Mode
           </span>
         </div>
-        <button className="flex items-center gap-1 px-3 py-1.5 bg-[#1A1A2E] border border-[#2A2A4A] rounded text-xs text-gray-400 hover:text-gray-200 transition-colors">
+        <button
+          onClick={onDownload}
+          className="flex items-center gap-1 px-3 py-1.5 bg-[#6C63FF] hover:bg-[#5B54E6] border border-[#6C63FF]/30 rounded text-xs text-white font-medium transition-colors shadow"
+        >
           <Download size={12} />
-          Export Grades
+          Download Report (.docx)
         </button>
       </div>
 

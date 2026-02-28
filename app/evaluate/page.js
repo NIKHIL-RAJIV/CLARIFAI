@@ -11,8 +11,9 @@ import MisconceptionBadge from '@/components/student/MisconceptionBadge';
 import InstructorPanel from '@/components/instructor/InstructorPanel';
 import LoadingPipeline from '@/components/shared/LoadingPipeline';
 import TaskTypeBadge from '@/components/shared/TaskTypeBadge';
-import { BookOpen, GraduationCap } from 'lucide-react';
+import { BookOpen, GraduationCap, Download } from 'lucide-react';
 import clsx from 'clsx';
+import { downloadReport } from '@/lib/generateReport';
 
 const TABS = [
   { key: 'scores', label: 'Scores' },
@@ -131,15 +132,10 @@ export default function EvaluatePage() {
       {isLoading && <LoadingPipeline currentLayer={currentLayer} />}
 
       {/* Main Content */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* LEFT COLUMN — Student View */}
-          <div
-            className={clsx(
-              'space-y-6',
-              activeView === 'instructor' ? 'hidden-mobile' : ''
-            )}
-          >
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+        {/* Student View */}
+        {activeView === 'student' && (
+          <div className="space-y-6">
             {/* Submission Panel */}
             <div className="bg-[#111827] border border-[#2A2A4A] rounded-xl p-6">
               <div className="flex items-center gap-2 mb-4">
@@ -155,23 +151,32 @@ export default function EvaluatePage() {
             {/* Results */}
             {evaluation && (
               <div className="bg-[#111827] border border-[#2A2A4A] rounded-xl p-6">
+                {/* Download Report Button */}
+                <div className="flex justify-end mb-4">
+                  <button
+                    onClick={() => downloadReport(evaluation, {}, 'student')}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-[#6C63FF] hover:bg-[#5B54E6] text-white text-xs font-medium rounded-lg transition-colors shadow"
+                  >
+                    <Download size={14} />
+                    Download Report (.docx)
+                  </button>
+                </div>
                 {renderStudentResults()}
               </div>
             )}
           </div>
+        )}
 
-          {/* RIGHT COLUMN — Instructor View */}
-          <div
-            className={clsx(
-              activeView === 'student' ? 'hidden-mobile' : ''
-            )}
-          >
-            <div className="bg-[#111827] border border-[#2A2A4A] rounded-xl p-6 sticky top-20">
+        {/* Instructor View */}
+        {activeView === 'instructor' && (
+          <div>
+            <div className="bg-[#111827] border border-[#2A2A4A] rounded-xl p-6">
               {evaluation ? (
                 <InstructorPanel
                   evaluation={evaluation}
                   onOverride={handleOverride}
                   overrides={overrides}
+                  onDownload={() => downloadReport(evaluation, overrides, 'instructor')}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -180,14 +185,14 @@ export default function EvaluatePage() {
                     Awaiting Submission...
                   </h3>
                   <p className="text-sm text-gray-600 max-w-xs">
-                    Submit a student assignment on the left panel to see the AI evaluation
-                    and instructor audit controls here.
+                    Submit a student assignment in the Student View first, then switch
+                    here to see the AI evaluation and instructor audit controls.
                   </p>
                 </div>
               )}
             </div>
           </div>
-        </div>
+        )}
       </main>
 
       <Footer />
