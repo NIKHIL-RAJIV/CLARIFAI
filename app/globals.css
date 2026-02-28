@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0D0D1A;
+  --foreground: #e5e5e5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2A2A4A #0D0D1A;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0D0D1A;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #2A2A4A;
+  border-radius: 3px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Custom range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: #2A2A4A;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #6C63FF;
+  cursor: pointer;
+  border: 2px solid #0D0D1A;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #6C63FF;
+  cursor: pointer;
+  border: 2px solid #0D0D1A;
+}
+
+/* Responsive panel toggle: hidden on mobile, always visible on desktop (lg+) */
+.hidden-mobile {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .hidden-mobile {
+    display: block;
+  }
+}
