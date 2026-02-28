@@ -57,11 +57,6 @@ export default function Home() {
           Next.js · Groq API · Llama 3.3 70B · Tailwind CSS · Vercel
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="absolute bottom-4 text-xs text-gray-700">
-        AMD Slingshot 2025 · AI in Education & Skill
-      </footer>
     </div>
   );
 }
