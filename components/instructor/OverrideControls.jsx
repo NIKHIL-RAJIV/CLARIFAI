@@ -4,7 +4,7 @@ import { Check, SlidersHorizontal } from 'lucide-react';
 import { getScoreColor } from '@/lib/utils';
 import clsx from 'clsx';
 
-export default function OverrideControls({ criterion, aiScore, override, onOverride, onAgree }) {
+export default function OverrideControls({ criterion, aiScore, maxScore = 10, override, onOverride, onAgree }) {
   const isAgreed = override === aiScore;
   const isOverridden = override !== undefined && override !== null;
 
@@ -30,12 +30,12 @@ export default function OverrideControls({ criterion, aiScore, override, onOverr
         <input
           type="range"
           min="1"
-          max="10"
+          max={maxScore}
           value={isOverridden ? override : aiScore}
           onChange={(e) => onOverride(criterion, parseInt(e.target.value))}
           className="flex-1 h-1 bg-[#2A2A4A] rounded-lg appearance-none cursor-pointer accent-[#6C63FF]"
         />
-        <span className={clsx('text-xs font-semibold w-6 text-right', getScoreColor(isOverridden ? override : aiScore))}>
+        <span className={clsx('text-xs font-semibold w-8 text-right', getScoreColor(isOverridden ? override : aiScore, maxScore))}>
           {isOverridden ? override : aiScore}
         </span>
       </div>

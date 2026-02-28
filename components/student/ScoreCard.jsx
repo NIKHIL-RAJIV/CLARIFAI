@@ -14,7 +14,8 @@ function CircularGauge({ score, max = 10 }) {
     return () => clearTimeout(timer);
   }, [score]);
 
-  const color = score >= 7 ? '#22c55e' : score >= 4 ? '#f59e0b' : '#ef4444';
+  const pct = (score / max) * 100;
+  const color = pct >= 70 ? '#22c55e' : pct >= 40 ? '#f59e0b' : '#ef4444';
 
   return (
     <div className="relative inline-flex items-center justify-center">
@@ -49,7 +50,8 @@ function CircularGauge({ score, max = 10 }) {
 function ScoreBar({ criterion, score, max = 10, index }) {
   const [width, setWidth] = useState(0);
   const percentage = (score / max) * 100;
-  const color = score >= 7 ? '#22c55e' : score >= 4 ? '#f59e0b' : '#ef4444';
+  const pct = percentage;
+  const color = pct >= 70 ? '#22c55e' : pct >= 40 ? '#f59e0b' : '#ef4444';
 
   useEffect(() => {
     const timer = setTimeout(() => setWidth(percentage), 100 + index * 100);
@@ -81,11 +83,15 @@ function ScoreBar({ criterion, score, max = 10, index }) {
 export default function ScoreCard({ scores, overall_score, summary }) {
   if (!scores || scores.length === 0) return null;
 
+  // Compute cumulative totals from individual criterion scores
+  const totalScore = scores.reduce((sum, s) => sum + s.score, 0);
+  const totalMax = scores.reduce((sum, s) => sum + (s.max || 10), 0);
+
   return (
     <div className="space-y-6">
       {/* Overall Score Gauge */}
       <div className="flex flex-col items-center py-4">
-        <CircularGauge score={overall_score} />
+        <CircularGauge score={totalScore} max={totalMax} />
         <p className="mt-3 text-sm font-medium text-gray-400">Overall Score</p>
       </div>
 

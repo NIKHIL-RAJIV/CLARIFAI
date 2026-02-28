@@ -5,7 +5,7 @@ import { Shield, Check, ChevronDown, ChevronUp, Eye, Download, SlidersHorizontal
 import { getScoreColor, getSeverityColor } from '@/lib/utils';
 import clsx from 'clsx';
 
-function CriterionOverride({ criterion, aiScore, evidence, override, onOverride, onAgree }) {
+function CriterionOverride({ criterion, aiScore, maxScore = 10, evidence, override, onOverride, onAgree }) {
   const [showEvidence, setShowEvidence] = useState(false);
   const isOverridden = override !== undefined && override !== null;
   const isAgreed = override === aiScore;
@@ -18,8 +18,8 @@ function CriterionOverride({ criterion, aiScore, evidence, override, onOverride,
           {/* AI Score */}
           <div className="text-center">
             <span className="text-[10px] text-gray-500 uppercase block">AI</span>
-            <span className={clsx('text-sm font-bold', getScoreColor(aiScore))}>
-              {aiScore}/10
+            <span className={clsx('text-sm font-bold', getScoreColor(aiScore, maxScore))}>
+              {aiScore}/{maxScore}
             </span>
           </div>
 
@@ -27,8 +27,8 @@ function CriterionOverride({ criterion, aiScore, evidence, override, onOverride,
           {isOverridden && !isAgreed && (
             <div className="text-center">
               <span className="text-[10px] text-cyan-400 uppercase block">You</span>
-              <span className={clsx('text-sm font-bold', getScoreColor(override))}>
-                {override}/10
+              <span className={clsx('text-sm font-bold', getScoreColor(override, maxScore))}>
+                {override}/{maxScore}
               </span>
             </div>
           )}
@@ -57,12 +57,12 @@ function CriterionOverride({ criterion, aiScore, evidence, override, onOverride,
           <input
             type="range"
             min="1"
-            max="10"
+            max={maxScore}
             value={isOverridden ? override : aiScore}
             onChange={(e) => onOverride(criterion, parseInt(e.target.value))}
             className="flex-1 h-1 bg-[#2A2A4A] rounded-lg appearance-none cursor-pointer accent-[#6C63FF]"
           />
-          <span className="text-xs text-gray-400 w-6 text-right">
+          <span className="text-xs text-gray-400 w-8 text-right">
             {isOverridden ? override : aiScore}
           </span>
         </div>
@@ -134,6 +134,7 @@ export default function InstructorPanel({ evaluation, onOverride, overrides = {}
             key={s.criterion}
             criterion={s.criterion}
             aiScore={s.score}
+            maxScore={s.max || 10}
             evidence={getEvidence(s.criterion)}
             override={overrides[s.criterion]}
             onOverride={onOverride}

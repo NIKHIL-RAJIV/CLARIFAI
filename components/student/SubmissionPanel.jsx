@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Code2, FileText, ListChecks, ChevronDown, ChevronUp, Send, Loader2, Upload, X } from 'lucide-react';
+import { Code2, FileText, ListChecks, ChevronDown, ChevronUp, Send, Loader2, Upload, X, Plus, Trash2 } from 'lucide-react';
 import { RUBRICS, RUBRIC_OPTIONS } from '@/lib/rubrics';
 import clsx from 'clsx';
 
@@ -49,6 +49,9 @@ export default function SubmissionPanel({ onSubmit, isLoading }) {
   const [rubricMode, setRubricMode] = useState('preset'); // 'preset' | 'custom'
   const [selectedRubric, setSelectedRubric] = useState('code_python');
   const [customRubric, setCustomRubric] = useState('');
+  const [customCriteria, setCustomCriteria] = useState([
+    { name: '', description: '', maxMarks: 10 },
+  ]);
   const [rubricOpen, setRubricOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null); // { name, size }
   const fileInputRef = useRef(null);
@@ -73,9 +76,39 @@ export default function SubmissionPanel({ onSubmit, isLoading }) {
   };
 
   const getRubricText = () => {
-    if (rubricMode === 'custom') return customRubric;
+    if (rubricMode === 'custom') {
+      const filled = customCriteria.filter(c => c.name.trim());
+      if (filled.length === 0) return '';
+      const total = filled.reduce((sum, c) => sum + (c.maxMarks || 10), 0);
+      let text = `CUSTOM RUBRIC (Total: ${total} marks)\n\n`;
+      filled.forEach((c, i) => {
+        text += `${i + 1}. ${c.name.trim()} (${c.maxMarks || 10} marks)\n`;
+        if (c.description.trim()) {
+          text += `   ${c.description.trim()}\n`;
+        }
+        text += '\n';
+      });
+      return text;
+    }
     return RUBRICS[selectedRubric]?.rubric || '';
   };
+
+  /* ── Custom criteria helpers ── */
+  const updateCriterion = (index, field, value) => {
+    setCustomCriteria(prev =>
+      prev.map((c, i) => (i === index ? { ...c, [field]: value } : c))
+    );
+  };
+
+  const addCriterion = () => {
+    setCustomCriteria(prev => [...prev, { name: '', description: '', maxMarks: 10 }]);
+  };
+
+  const removeCriterion = (index) => {
+    setCustomCriteria(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const totalMarks = customCriteria.reduce((sum, c) => sum + (c.maxMarks || 0), 0);
 
   /* ── File upload handler ── */
   const handleFileUpload = (e) => {
@@ -266,13 +299,77 @@ export default function SubmissionPanel({ onSubmit, isLoading }) {
                 )}
               </div>
             ) : (
-              <textarea
-                value={customRubric}
-                onChange={(e) => setCustomRubric(e.target.value)}
-                placeholder="Paste your custom rubric here..."
-                rows={6}
-                className="w-full bg-[#1A1A2E] border border-[#2A2A4A] rounded-lg px-3 py-2 text-sm text-gray-300 placeholder-gray-600 resize-y focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/50"
-              />
+              <div className="space-y-3">
+                {customCriteria.map((criterion, index) => (
+                  <div
+                    key={index}
+                    className="border border-[#2A2A4A] rounded-lg p-3 bg-[#1A1A2E] space-y-2"
+                  >
+                    <div className="flex gap-2 items-start">
+                      {/* Criterion name + description */}
+                      <div className="flex-1 space-y-2">
+                        <input
+                          type="text"
+                          value={criterion.name}
+                          onChange={(e) => updateCriterion(index, 'name', e.target.value)}
+                          placeholder={`Criterion ${index + 1} name (e.g., Code Quality)`}
+                          className="w-full bg-[#0D0D1A] border border-[#2A2A4A] rounded px-3 py-1.5 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/50"
+                        />
+                        <textarea
+                          value={criterion.description}
+                          onChange={(e) => updateCriterion(index, 'description', e.target.value)}
+                          placeholder="Description / expectations (optional)..."
+                          rows={2}
+                          className="w-full bg-[#0D0D1A] border border-[#2A2A4A] rounded px-3 py-1.5 text-xs text-gray-400 placeholder-gray-600 resize-y focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/50"
+                        />
+                      </div>
+
+                      {/* Max marks input */}
+                      <div className="flex flex-col items-center gap-1 pt-0.5">
+                        <label className="text-[10px] text-gray-500 font-medium">Max Marks</label>
+                        <input
+                          type="number"
+                          value={criterion.maxMarks}
+                          onChange={(e) =>
+                            updateCriterion(index, 'maxMarks', Math.max(1, parseInt(e.target.value) || 1))
+                          }
+                          min={1}
+                          className="w-16 bg-[#0D0D1A] border border-[#2A2A4A] rounded px-2 py-1.5 text-sm text-center text-gray-300 focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/50"
+                        />
+                      </div>
+
+                      {/* Remove button */}
+                      {customCriteria.length > 1 && (
+                        <button
+                          onClick={() => removeCriterion(index)}
+                          className="mt-1.5 p-1 text-gray-500 hover:text-red-400 transition-colors"
+                          title="Remove criterion"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Add criterion + Total */}
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={addCriterion}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-[#1A1A2E] border border-dashed border-[#2A2A4A] rounded-lg text-xs text-gray-400 hover:text-[#6C63FF] hover:border-[#6C63FF]/50 transition-all"
+                  >
+                    <Plus size={13} />
+                    Add Criterion
+                  </button>
+                  <div className="text-xs text-gray-400">
+                    <span className="text-gray-500">{customCriteria.length} criteria</span>
+                    <span className="mx-2 text-gray-600">·</span>
+                    <span>
+                      Total: <span className="text-[#6C63FF] font-semibold">{totalMarks}</span> marks
+                    </span>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         )}
