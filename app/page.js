@@ -8,7 +8,7 @@ export default function Home() {
         {/* Logo / Title */}
         <div className="mb-6">
           <h1 className="text-5xl sm:text-6xl font-extrabold text-white tracking-tight">
-            Clarif<span className="text-[#6C63FF]">AI</span>
+            ScoreLens<span className="text-[#6C63FF]">AI</span>
           </h1>
           <p className="mt-2 text-lg text-gray-400 font-medium">
             Evaluate. Explain. Empower.
