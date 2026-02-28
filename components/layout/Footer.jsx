@@ -8,9 +8,6 @@ export default function Footer() {
           <p className="text-xs text-gray-600">
             ClarifAI — Evaluate. Explain. Empower.
           </p>
-          <p className="text-xs text-gray-600">
-            Built for AMD Slingshot 2025 · AI in Education & Skill
-          </p>
         </div>
       </div>
     </footer>
