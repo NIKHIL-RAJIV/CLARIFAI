@@ -43,7 +43,7 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    console.error('ClarifAI evaluation error:', error);
+    console.error('ScoreLensAI evaluation error:', error);
     return NextResponse.json(
       { error: 'Evaluation failed. Please try again.', detail: error.message },
       { status: 500 }

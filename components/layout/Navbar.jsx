@@ -12,7 +12,7 @@ export default function Navbar({ activeView, onViewChange }) {
           <Link href="/" className="flex items-center gap-2 group">
             <Sparkles size={20} className="text-[#6C63FF] group-hover:text-[#8B83FF] transition-colors" />
             <span className="text-lg font-bold text-gray-200 group-hover:text-white transition-colors">
-              ClarifAI
+              ScoreLensAI
             </span>
             <span className="hidden sm:inline text-[10px] text-gray-600 font-medium tracking-wider uppercase ml-1">
               Evaluate. Explain. Empower.

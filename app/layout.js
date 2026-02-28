@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "ClarifAI — Evaluate. Explain. Empower.",
+  title: "ScoreLensAI — Evaluate. Explain. Empower.",
   description: "A 4-layer Explainable AI pipeline that evaluates student submissions with rubric scoring, evidence citing, counterfactual coaching, and misconception tagging.",
 };
 
