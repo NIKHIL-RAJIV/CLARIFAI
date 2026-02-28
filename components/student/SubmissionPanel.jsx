@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Code2, FileText, ListChecks, ChevronDown, ChevronUp, Send, Loader2 } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Code2, FileText, ListChecks, ChevronDown, ChevronUp, Send, Loader2, Upload, X } from 'lucide-react';
 import { RUBRICS, RUBRIC_OPTIONS } from '@/lib/rubrics';
 import clsx from 'clsx';
 
@@ -11,7 +11,7 @@ const TASK_TYPES = [
   { key: 'mcq', label: 'MCQ', icon: ListChecks },
 ];
 
-const CODE_PLACEHOLDER = `# Paste your Python code here...
+const CODE_PLACEHOLDER = `# Paste your Python code here or upload a .py / .ipynb file...
 def example_function(n):
     result = []
     for i in range(n):
@@ -26,6 +26,23 @@ Q1: B — Explanation: The answer is B because...
 Q2: A — Explanation: I chose A since...
 Q3: D — Explanation: This is correct because...`;
 
+/* ── Helper: extract code cells from a .ipynb JSON ── */
+function extractNotebookCode(notebookJson) {
+  try {
+    const nb = JSON.parse(notebookJson);
+    const cells = nb.cells || [];
+    const codeCells = cells.filter(c => c.cell_type === 'code');
+    return codeCells
+      .map((c, i) => {
+        const source = Array.isArray(c.source) ? c.source.join('') : c.source;
+        return `# ── Cell ${i + 1} ──\n${source}`;
+      })
+      .join('\n\n');
+  } catch {
+    return notebookJson; // fallback: return raw content
+  }
+}
+
 export default function SubmissionPanel({ onSubmit, isLoading }) {
   const [taskType, setTaskType] = useState('code');
   const [submission, setSubmission] = useState('');
@@ -33,6 +50,8 @@ export default function SubmissionPanel({ onSubmit, isLoading }) {
   const [selectedRubric, setSelectedRubric] = useState('code_python');
   const [customRubric, setCustomRubric] = useState('');
   const [rubricOpen, setRubricOpen] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null); // { name, size }
+  const fileInputRef = useRef(null);
 
   const filteredRubrics = RUBRIC_OPTIONS.filter(r => r.taskType === taskType);
 
@@ -56,6 +75,41 @@ export default function SubmissionPanel({ onSubmit, isLoading }) {
   const getRubricText = () => {
     if (rubricMode === 'custom') return customRubric;
     return RUBRICS[selectedRubric]?.rubric || '';
+  };
+
+  /* ── File upload handler ── */
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['py', 'ipynb'].includes(ext)) {
+      alert('Only .py and .ipynb files are supported.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      let content = evt.target.result;
+      if (ext === 'ipynb') {
+        content = extractNotebookCode(content);
+      }
+      setSubmission(content);
+      setUploadedFile({ name: file.name, size: file.size });
+      // Auto-switch to code task type when uploading code files
+      if (taskType !== 'code') {
+        handleTaskTypeChange('code');
+      }
+    };
+    reader.readAsText(file);
+
+    // Reset input so the same file can be re-uploaded
+    e.target.value = '';
+  };
+
+  const clearUploadedFile = () => {
+    setUploadedFile(null);
+    setSubmission('');
   };
 
   const handleSubmit = () => {
@@ -98,9 +152,45 @@ export default function SubmissionPanel({ onSubmit, isLoading }) {
 
       {/* Submission Input */}
       <div>
-        <label className="block text-sm font-medium text-gray-400 mb-2">
-          Your Submission
-        </label>
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-sm font-medium text-gray-400">
+            Your Submission
+          </label>
+
+          {/* Upload Button */}
+          <div className="flex items-center gap-2">
+            {uploadedFile && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#6C63FF]/15 border border-[#6C63FF]/30 rounded-lg">
+                <Code2 size={12} className="text-[#6C63FF]" />
+                <span className="text-[11px] text-[#6C63FF] font-medium max-w-[120px] truncate">
+                  {uploadedFile.name}
+                </span>
+                <button
+                  onClick={clearUploadedFile}
+                  className="text-gray-500 hover:text-red-400 transition-colors"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1A1A2E] border border-[#2A2A4A] rounded-lg text-xs text-gray-400 hover:text-gray-200 hover:border-[#6C63FF]/50 transition-all"
+            >
+              <Upload size={13} />
+              Upload .py / .ipynb
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".py,.ipynb"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </div>
+        </div>
+
         <textarea
           value={submission}
           onChange={(e) => setSubmission(e.target.value)}
