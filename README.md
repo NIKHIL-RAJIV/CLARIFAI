@@ -12,15 +12,15 @@ consistent, and genuinely useful for both instructors and students.
 
 ### 4-Layer AI Evaluation Pipeline
 
--   Rubric-aligned scoring\
--   Evidence extraction highlighting decision points\
--   Counterfactual improvement suggestions\
+-   Rubric-aligned scoring
+-   Evidence extraction highlighting decision points
+-   Counterfactual improvement suggestions
 -   Cognitive misconception tagging
 
 ### Multi-Task Support
 
--   Code evaluation\
--   Essay evaluation\
+-   Code evaluation
+-   Essay evaluation
 -   MCQ evaluation
 
 ### Explainable Feedback
@@ -56,14 +56,14 @@ explainability, transforming grading into a learning-focused process.
 
 The evaluation pipeline consists of four sequential layers:
 
-1.  **Structured Scoring**\
+1.  **Structured Scoring**
     Scores each submission according to rubric criteria.
 
-2.  **Evidence Extraction**\
+2.  **Evidence Extraction**
     Identifies the exact parts of the submission that justify each
     score.
 
-3.  **Counterfactual Coaching**\
+3.  **Counterfactual Coaching**
     Suggests specific improvements that could increase the score.
 
 4.  **Misconception Detection**\
@@ -75,18 +75,18 @@ The evaluation pipeline consists of four sequential layers:
 
 ### Frontend
 
--   Next.js (App Router)\
--   React\
+-   Next.js (App Router)
+-   React
 -   Tailwind CSS
 
 ### Backend and API
 
--   Next.js API Routes\
+-   Next.js API Routes
 -   Structured JSON outputs
 
 ### AI Engine
 
--   Llama 3.3 70B via Groq\
+-   Llama 3.3 70B via Groq
 -   High-speed inference with structured responses
 
 ### Deployment
@@ -130,14 +130,14 @@ Open `http://localhost:3000` in your browser.
 
 ### Default Rubric Evaluation
 
--   Upload code, essay text, or MCQ responses\
--   Select built-in rubric\
+-   Upload code, essay text, or MCQ responses
+-   Select built-in rubric
 -   View per-criterion scores with evidence and coaching
 
 ### Custom Rubric Evaluation
 
--   Define criteria and assign custom max marks\
--   Submit content\
+-   Define criteria and assign custom max marks
+-   Submit content
 -   Receive weighted scoring based on your grading scheme
 
 ------------------------------------------------------------------------
@@ -146,11 +146,11 @@ Open `http://localhost:3000` in your browser.
 
 After evaluation, the dashboard provides:
 
--   Overall score with per-criterion breakdown\
--   Evidence-linked explanations\
--   Actionable improvement suggestions\
--   Misconception tagging\
--   Instructor override controls\
+-   Overall score with per-criterion breakdown
+-   Evidence-linked explanations
+-   Actionable improvement suggestions
+-   Misconception tagging
+-   Instructor override controls
 -   Downloadable evaluation report
 
 ------------------------------------------------------------------------
@@ -160,9 +160,3 @@ After evaluation, the dashboard provides:
 ScoreLensAI reduces grading workload, improves consistency, enhances
 feedback clarity, and enables scalable, explainable assessment. It
 shifts evaluation from a final score into a continuous learning process.
-
-------------------------------------------------------------------------
-
-## License
-
-MIT License
